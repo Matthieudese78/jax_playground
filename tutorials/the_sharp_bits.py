@@ -6,9 +6,6 @@ from jax import random
 import jax
 import jax.numpy as jnp
 from time import time
-#%%
-jax.devices()
-
 # %%
 def impure_print_side_effect(x):
   print("Executing function")  # This is a side-effect
@@ -29,13 +26,22 @@ print ("Third call, different type: ", jit(impure_print_side_effect)(jnp.array([
 print("JAX devices:", jax.devices())
 
 # Create a large array on GPU
-x = jnp.ones((10, 10))
+x = jnp.ones((10000, 10000))
+
+jax.device_put(x)
 
 # Perform a computation
 start = time()
 y = jnp.dot(x, x.T).block_until_ready()  # Ensure computation completes
 end = time()
 
-print(f"Computation finished in {end - start:.3f} seconds")
+print(f"1st run : Computation finished in {end - start:.3f} seconds")
+
+# %%
+start = time()
+y = jnp.dot(x, x.T).block_until_ready()  # Ensure computation completes
+end = time()
+
+print(f"2nd run : Computation finished in {end - start:.3f} seconds")
 
 # %%
